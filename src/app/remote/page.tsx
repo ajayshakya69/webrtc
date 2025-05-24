@@ -6,18 +6,12 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [webRtc, setwebRtc] = useState<peerConnection | null>(null);
   const [offer, setOffer] = useState<string>("");
-  const [remoteOffer, setRemoteOffer] = useState("");
+  const [answer, setanswer] = useState("");
 
-
-  async function createOffer() {
-    const offer = await webRtc?.createOffer();
-    setOffer(JSON.stringify(offer));
+  async function addOffer() {
+    const answer = await webRtc?.createAnswer(offer);
+    setanswer(JSON.stringify(answer));
   }
-
-  async function addAnswer() {
-    await webRtc?.addRemoteAnswer(remoteOffer);
-  }
-
   useEffect(() => {
     const connection = new peerConnection();
 
@@ -33,25 +27,21 @@ export default function Home() {
         </p>
         <textarea
           value={offer}
-          disabled
+          onChange={(e)=> setOffer(e.target.value)}
           className="w-full h-32"
           placeholder="Generated Offer"
         />
 
-        <button type="button" onClick={createOffer}>
-          Create Offer
+        <button type="button" onClick={addOffer}>
+          Add Offer
         </button>
 
         <textarea
-          value={remoteOffer}
-          onChange={(e) => setRemoteOffer(e.target.value)}
+          value={answer}
+          disabled
           className="w-full h-32 mt-4"
           placeholder="Paste remote offer here"
         />
-
-        <button type="button" onClick={addAnswer}>
-          Add Answer
-        </button>
 
         <Image
           src="webrtcimage.svg"
